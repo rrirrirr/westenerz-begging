@@ -96,14 +96,19 @@
             pointer-events: none;
         }
 
-        /* Responsive adjustments */
+        /* Mobile fallback - hide video, show poster */
         @media (max-width: 768px) {
+            .video-background video {
+                display: none;
+            }
+            
             .video-background {
                 width: 100vw;
                 height: 50vh;
                 border-radius: 0;
                 left: 0;
                 transform: translateY(-50%);
+                background: url('images/video-poster.jpg') center center / cover no-repeat;
             }
             
             .video-glow {
