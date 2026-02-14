@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Westenerz Mixtape Vol. 1 - Pre-Order</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <div class="noise-overlay"></div>
+    <div class="scanlines"></div>
+    
+    <header class="hero">
+        <div class="glitch-container">
+            <h1 class="glitch" data-text="WESTENERZ">WESTENERZ</h1>
+        </div>
+        <p class="subtitle">MIXTAPE VOL. 1</p>
+        <div class="cassette-icon">📼</div>
+    </header>
+
+    <main class="container">
+        <section class="product-showcase">
+            <div class="vinyl-record">
+                <div class="vinyl">
+                    <div class="vinyl-label">
+                        <span class="label-text">WEST<br>ENERZ</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="product-info">
+                <h2>Limited Edition Cassette</h2>
+                <p class="description">
+                    Obscure sounds from the underground. A collection of demos, 
+                    live recordings, and bedroom experiments. 
+                    <em>Only available through this pre-order.</em>
+                </p>
+                
+                <div class="price-tag">
+                    <span class="currency">SEK</span>
+                    <span class="amount">150</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="sticker-bonus">
+            <div class="sticker-container">
+                <img src="images/sticker-waifu.png" alt="Exclusive Westenerz Waifu Sticker" class="sticker-image">
+                <div class="sticker-glow"></div>
+            </div>
+            <div class="sticker-info">
+                <span class="badge">EXCLUSIVE</span>
+                <h3>Waifu Sticker Included</h3>
+                <p>Limited edition sticker featuring our mascot. Every pre-order gets one.</p>
+            </div>
+        </section>
+
+        <section class="crowdfunding">
+            <h2>Help Us Press the Tapes</h2>
+            <p class="goal-text">We need <strong>2000 SEK</strong> to make this real. Ships when we reach our goal.</p>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-stats">
+                    <span id="currentAmount">0 SEK</span>
+                    <span id="goalAmount">2000 SEK</span>
+                </div>
+                <p class="orders-needed"><span id="ordersLeft">14</span> orders needed</p>
+            </div>
+        </section>
+
+        <section class="payment-section">
+            <h2>Pre-Order Now</h2>
+            
+            <div class="payment-options">
+                <div class="payment-card stripe-card">
+                    <div class="card-header">
+                        <span class="card-icon">💳</span>
+                        <h3>Pay with Card</h3>
+                    </div>
+                    <p>Secure payment via Stripe</p>
+                    <button id="checkoutButton" class="btn-primary">
+                        Pre-Order 150 SEK
+                    </button>
+                </div>
+
+                <div class="payment-card swish-card">
+                    <div class="card-header">
+                        <span class="card-icon">📱</span>
+                        <h3>Pay with Swish</h3>
+                    </div>
+                    <p>Direct bank transfer</p>
+                    <button id="swishButton" class="btn-secondary">
+                        Swish 150 SEK
+                    </button>
+                </div>
+            </div>
+
+            <div class="swish-modal" id="swishModal">
+                <div class="modal-content">
+                    <span class="close-btn" id="closeModal">&times;</span>
+                    <h3>Pay with Swish</h3>
+                    <div class="swish-qr">
+                        <p>Swish <strong>150 SEK</strong> to:</p>
+                        <code class="swish-number">07X-XXX XX XX</code>
+                        <p class="swish-message">Message: "Westenerz Mixtape"</p>
+                    </div>
+                    <p class="swish-note">Email your receipt to <a href="mailto:westenerz@example.com">westenerz@example.com</a></p>
+                </div>
+            </div>
+        </section>
+
+        <section class="tracklist">
+            <h2>Tracklist</h2>
+            <ol class="tracks">
+                <li><span class="track-num">A1</span> <span class="track-title">Static Dreams</span> <span class="track-time">3:42</span></li>
+                <li><span class="track-num">A2</span> <span class="track-title">Basement Tapes</span> <span class="track-time">4:15</span></li>
+                <li><span class="track-num">A3</span> <span class="track-title">Ghost Frequency</span> <span class="track-time">2:58</span></li>
+                <li><span class="track-num">A4</span> <span class="track-title">Sunday Morning Static</span> <span class="track-time">5:01</span></li>
+                <li><span class="track-num">B1</span> <span class="track-title">Drifter</span> <span class="track-time">3:33</span></li>
+                <li><span class="track-num">B2</span> <span class="track-title">Faded Polaroids</span> <span class="track-time">4:22</span></li>
+                <li><span class="track-num">B3</span> <span class="track-title">After Hours</span> <span class="track-time">3:47</span></li>
+                <li><span class="track-num">B4</span> <span class="track-title">Outro (Tape Hiss)</span> <span class="track-time">2:11</span></li>
+            </ol>
+        </section>
+
+        <section class="shipping-info">
+            <h2>Shipping Info</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-icon">🌍</span>
+                    <h4>Worldwide</h4>
+                    <p>We ship everywhere</p>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">📦</span>
+                    <h4>Goal Based</h4>
+                    <p>Ships when we hit 2000 SEK</p>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">✉️</span>
+                    <h4>Updates</h4>
+                    <p>Email notifications</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="copyright">&copy; 2024 WESTENERZ</p>
+            <div class="social-links">
+                <a href="#" class="social-link" aria-label="Bandcamp">BC</a>
+                <a href="#" class="social-link" aria-label="Instagram">IG</a>
+                <a href="#" class="social-link" aria-label="Spotify">SP</a>
+            </div>
+        </div>
+        <p class="footer-note">Hand-dubbed with love &lt;3</p>
+    </footer>
+
+    <script>
+        // Configuration
+        const PRICE_PER_UNIT = 150;
+        const GOAL_AMOUNT = 2000;
+        
+        // Simulated current progress (in a real app, this would come from a backend)
+        let currentAmount = 0; // Start at 0, would be fetched from server
+        
+        // Update progress bar
+        function updateProgress(amount) {
+            const percentage = Math.min((amount / GOAL_AMOUNT) * 100, 100);
+            const ordersCount = Math.floor(amount / PRICE_PER_UNIT);
+            const ordersNeeded = Math.ceil((GOAL_AMOUNT - amount) / PRICE_PER_UNIT);
+            
+            document.getElementById('progressFill').style.width = percentage + '%';
+            document.getElementById('currentAmount').textContent = amount + ' SEK';
+            document.getElementById('ordersLeft').textContent = Math.max(ordersNeeded, 0);
+        }
+        
+        // Initialize progress
+        updateProgress(currentAmount);
+        
+        // Stripe Checkout (replace with your actual Stripe setup)
+        const checkoutButton = document.getElementById('checkoutButton');
+        checkoutButton.addEventListener('click', function() {
+            // Replace with your Stripe integration
+            alert('Stripe checkout would open here.\n\nTo set up:\n1. Create a Stripe account\n2. Add your publishable key\n3. Create a payment intent');
+            
+            // Example Stripe integration:
+            // const stripe = Stripe('pk_test_YOUR_KEY');
+            // stripe.redirectToCheckout({...});
+        });
+        
+        // Swish Modal
+        const swishButton = document.getElementById('swishButton');
+        const swishModal = document.getElementById('swishModal');
+        const closeModal = document.getElementById('closeModal');
+        
+        swishButton.addEventListener('click', function() {
+            swishModal.style.display = 'flex';
+        });
+        
+        closeModal.addEventListener('click', function() {
+            swishModal.style.display = 'none';
+        });
+        
+        window.addEventListener('click', function(event) {
+            if (event.target === swishModal) {
+                swishModal.style.display = 'none';
+            }
+        });
+        
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('section').forEach(section => {
+            section.classList.add('fade-in');
+            observer.observe(section);
+        });
+        
+        // Vinyl rotation animation
+        const vinyl = document.querySelector('.vinyl');
+        let rotation = 0;
+        let isPlaying = true;
+        
+        function animateVinyl() {
+            if (isPlaying) {
+                rotation += 0.5;
+                vinyl.style.transform = `rotate(${rotation}deg)`;
+            }
+            requestAnimationFrame(animateVinyl);
+        }
+        animateVinyl();
+        
+        // Glitch effect randomization
+        setInterval(() => {
+            const glitch = document.querySelector('.glitch');
+            glitch.style.textShadow = `
+                ${Math.random() * 4 - 2}px 0 #ff00ff,
+                ${Math.random() * 4 - 2}px 0 #00ffff
+            `;
+        }, 100);
+    </script>
+</body>
+</html>
