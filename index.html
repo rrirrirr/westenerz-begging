@@ -10,161 +10,81 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
     <script src="https://js.stripe.com/v3/"></script>
     <style>
-        /* ===== FEATHER EFFECT STYLES ===== */
-        
-        /* Soft glow behind video - pink/cyan blend */
-        .video-glow {
-            position: fixed;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-            width: 100vw;
-            height: 85vh;
-            z-index: 0;
-            border-radius: 0;
-            background: radial-gradient(
-                ellipse at center,
-                rgba(255, 0, 110, 0.12) 0%,
-                rgba(131, 56, 236, 0.08) 40%,
-                transparent 75%
-            );
-            filter: blur(50px);
-            pointer-events: none;
-        }
-
-        /* Video container - full width edge to edge */
-        .video-background {
-            position: fixed;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-            width: 100vw;
-            height: 70vh;
-            z-index: 1;
+        /* Hero video background styles */
+        .hero {
+            position: relative;
+            min-height: 80vh;
             overflow: hidden;
-            border-radius: 0;
         }
-
-        /* Alternative radial feather mode */
-        .video-background.radial-feather {
-            -webkit-mask-image: radial-gradient(
-                ellipse 85% 85% at center,
-                black 0%,
-                black 65%,
-                transparent 100%
-            );
-            mask-image: radial-gradient(
-                ellipse 85% 85% at center,
-                black 0%,
-                black 65%,
-                transparent 100%
-            );
-            border-radius: 60px;
+        
+        .hero-video-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
         }
-
-        .video-background video {
+        
+        .hero-video-bg video {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-
-        /* Corner accents - removed for edge-to-edge video */
-        .corner {
-            display: none;
-        }
-
-        /* Ensure content appears above video */
-        .hero,
-        .container,
-        .footer {
-            position: relative;
-            z-index: 10;
-        }
-
-        /* Gradient transition between header and main */
-        .section-transition {
-            height: 120px;
+        
+        .hero-video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: linear-gradient(
                 to bottom,
-                rgba(10, 10, 15, 1) 0%,
-                rgba(10, 10, 15, 0.95) 30%,
-                rgba(10, 10, 15, 0.8) 60%,
-                transparent 100%
+                rgba(10, 10, 15, 0.3) 0%,
+                rgba(10, 10, 15, 0.5) 50%,
+                rgba(10, 10, 15, 0.95) 100%
             );
+            z-index: 1;
+        }
+        
+        .hero-content {
             position: relative;
-            z-index: 5;
-            pointer-events: none;
+            z-index: 2;
         }
 
-        /* Mobile fallback - hide video, show poster */
+        /* Mobile fallback - hide video in hero, use poster */
         @media (max-width: 768px) {
-            .video-background video {
+            .hero-video-bg video {
                 display: none;
             }
             
-            .video-background {
-                width: 100vw;
-                height: 50vh;
-                border-radius: 0;
-                left: 0;
-                transform: translateY(-50%);
+            .hero-video-bg {
                 background: url('images/video-poster.jpg') center center / cover no-repeat;
-            }
-            
-            .video-glow {
-                width: 100vw;
-                height: 60vh;
-                filter: blur(30px);
-                left: 0;
-                transform: translateY(-50%);
-            }
-
-            .section-transition {
-                height: 80px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .video-background {
-                width: 100vw;
-                height: 40vh;
-                border-radius: 0;
-                left: 0;
-                transform: translateY(-50%);
             }
         }
     </style>
 </head>
 <body>
-    <!-- Soft glow behind video -->
-    <div class="video-glow"></div>
-
-    <!-- Feathered Background Video -->
-    <div class="video-background">
-        <video autoplay muted loop playsinline poster="images/video-poster.jpg">
-            <source src="videos/hero-montage.mp4" type="video/mp4">
-        </video>
-    </div>
-    
-    <!-- Corner accent decorations -->
-    <div class="corner corner-tl"></div>
-    <div class="corner corner-tr"></div>
-    <div class="corner corner-bl"></div>
-    <div class="corner corner-br"></div>
-    
     <div class="noise-overlay"></div>
     <div class="scanlines"></div>
     
     <header class="hero">
-        <div class="glitch-container">
-            <h1 class="glitch" data-text="WESTENERZ">WESTENERZ</h1>
+        <!-- Video background in hero -->
+        <div class="hero-video-bg">
+            <video autoplay muted loop playsinline poster="images/video-poster.jpg">
+                <source src="videos/hero-montage.mp4" type="video/mp4">
+            </video>
+            <div class="hero-video-overlay"></div>
         </div>
-        <p class="subtitle">MIXTAPE VOL. 1</p>
-        <div class="cassette-icon">📼</div>
+        
+        <div class="hero-content">
+            <div class="glitch-container">
+                <h1 class="glitch" data-text="WESTENERZ">WESTENERZ</h1>
+            </div>
+            <p class="subtitle">MIXTAPE VOL. 1</p>
+            <div class="cassette-icon">📼</div>
+        </div>
     </header>
-
-    <!-- Gradient transition between header and main -->
-    <div class="section-transition"></div>
 
     <main class="container">
         <section class="product-showcase">
