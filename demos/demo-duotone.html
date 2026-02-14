@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duotone Effect - Westenerz Mixtape</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-bg: #0a0a0f;
+            --color-accent: #ff006e;
+            --color-cyan: #00f5d4;
+            --color-text: #f0f0f5;
+            --font-display: 'Syne', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            font-family: var(--font-mono);
+            color: var(--color-text);
+        }
+
+        /* Full screen video container */
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            /* Grayscale the video first for better duotone effect */
+            filter: grayscale(100%) contrast(1.2);
+        }
+
+        /* DUOTONE EFFECT - Pink/cyan vaporwave overlay */
+        .duotone-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            /* Pink/cyan vaporwave gradient using mix-blend-mode */
+            background: linear-gradient(
+                135deg,
+                rgba(255, 0, 110, 0.6) 0%,
+                rgba(131, 56, 236, 0.5) 25%,
+                rgba(0, 245, 212, 0.6) 50%,
+                rgba(131, 56, 236, 0.5) 75%,
+                rgba(255, 0, 110, 0.6) 100%
+            );
+            mix-blend-mode: overlay;
+            animation: duotone-shift 8s ease-in-out infinite;
+        }
+
+        @keyframes duotone-shift {
+            0%, 100% {
+                background: linear-gradient(
+                    135deg,
+                    rgba(255, 0, 110, 0.6) 0%,
+                    rgba(131, 56, 236, 0.5) 25%,
+                    rgba(0, 245, 212, 0.6) 50%,
+                    rgba(131, 56, 236, 0.5) 75%,
+                    rgba(255, 0, 110, 0.6) 100%
+                );
+            }
+            50% {
+                background: linear-gradient(
+                    135deg,
+                    rgba(0, 245, 212, 0.6) 0%,
+                    rgba(255, 0, 110, 0.5) 25%,
+                    rgba(131, 56, 236, 0.6) 50%,
+                    rgba(255, 0, 110, 0.5) 75%,
+                    rgba(0, 245, 212, 0.6) 100%
+                );
+            }
+        }
+
+        /* Alternative duotone using hard-light for more contrast */
+        .duotone-hardlight {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 0, 110, 0.3) 0%,
+                rgba(0, 245, 212, 0.3) 100%
+            );
+            mix-blend-mode: hard-light;
+            display: none;
+        }
+
+        /* Color overlay for shadows/highlights */
+        .duotone-colorize {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 4;
+            pointer-events: none;
+            /* Shadow color (pink) and highlight color (cyan) */
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 0, 110, 0.2) 0%,
+                transparent 50%,
+                rgba(0, 245, 212, 0.2) 100%
+            );
+            mix-blend-mode: color-dodge;
+        }
+
+        /* Vignette to focus the effect */
+        .duotone-vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            pointer-events: none;
+            background: radial-gradient(
+                ellipse at center,
+                transparent 0%,
+                transparent 50%,
+                rgba(10, 10, 15, 0.7) 100%
+            );
+        }
+
+        /* Grain overlay */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 6;
+            pointer-events: none;
+            opacity: 0.06;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            mix-blend-mode: overlay;
+        }
+
+        /* Demo label */
+        .demo-label {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 10;
+            background: rgba(10, 10, 15, 0.8);
+            border: 1px solid var(--color-accent);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .demo-label h1 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--color-accent), var(--color-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.25rem;
+        }
+
+        .demo-label p {
+            font-size: 0.75rem;
+            color: rgba(240, 240, 245, 0.7);
+            letter-spacing: 0.05em;
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(10, 10, 15, 0.9);
+            padding: 0.75rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 95vw;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 0.6rem 1.2rem;
+            color: rgba(240, 240, 245, 0.7);
+            text-decoration: none;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--color-text);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--color-accent), var(--color-cyan));
+            color: white;
+        }
+
+        /* Toggle button */
+        .toggle-btn {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 10;
+            background: rgba(10, 10, 15, 0.8);
+            border: 1px solid var(--color-cyan);
+            color: var(--color-cyan);
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .toggle-btn:hover {
+            background: var(--color-cyan);
+            color: var(--color-bg);
+        }
+
+        /* Color palette indicator */
+        .palette-indicator {
+            position: fixed;
+            top: 50%;
+            right: 2rem;
+            transform: translateY(-50%);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .color-swatch {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .color-swatch.pink { background: var(--color-accent); }
+        .color-swatch.purple { background: #8338ec; }
+        .color-swatch.cyan { background: var(--color-cyan); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .demo-label {
+                top: 1rem;
+                left: 1rem;
+                padding: 0.75rem 1rem;
+            }
+
+            .demo-label h1 {
+                font-size: 1.2rem;
+            }
+
+            .nav-container {
+                bottom: 1rem;
+                padding: 0.5rem;
+                gap: 0.25rem;
+            }
+
+            .nav-link {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.65rem;
+            }
+
+            .toggle-btn {
+                top: 1rem;
+                right: 1rem;
+                padding: 0.5rem 0.75rem;
+                font-size: 0.65rem;
+            }
+
+            .palette-indicator {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Video Background -->
+    <div class="video-container">
+        <video autoplay muted loop playsinline>
+            <source src="../videos/hero-montage.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- Duotone Overlay -->
+    <div class="duotone-overlay" id="duotoneMain"></div>
+
+    <!-- Hard Light Variant (hidden by default) -->
+    <div class="duotone-hardlight" id="duotoneHard"></div>
+
+    <!-- Colorize Overlay -->
+    <div class="duotone-colorize" id="duotoneColor"></div>
+
+    <!-- Vignette -->
+    <div class="duotone-vignette" id="duotoneVignette"></div>
+
+    <!-- Grain Overlay -->
+    <div class="grain-overlay"></div>
+
+    <!-- Demo Label -->
+    <div class="demo-label">
+        <h1>Duotone</h1>
+        <p>Pink/cyan vaporwave color overlay</p>
+    </div>
+
+    <!-- Color Palette Indicator -->
+    <div class="palette-indicator">
+        <div class="color-swatch pink"></div>
+        <div class="color-swatch purple"></div>
+        <div class="color-swatch cyan"></div>
+    </div>
+
+    <!-- Toggle Button -->
+    <button class="toggle-btn" id="toggleMode">Switch Mode</button>
+
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <a href="demo-vignette.html" class="nav-link">Vignette</a>
+        <a href="demo-scanlines.html" class="nav-link">Scanlines</a>
+        <a href="demo-blur.html" class="nav-link">Blur</a>
+        <a href="demo-duotone.html" class="nav-link active">Duotone</a>
+        <a href="demo-chromatic.html" class="nav-link">Chromatic</a>
+        <a href="../index.html" class="nav-link">← Back</a>
+    </nav>
+
+    <script>
+        // Toggle between overlay and hard-light modes
+        const toggleBtn = document.getElementById('toggleMode');
+        const duotoneMain = document.getElementById('duotoneMain');
+        const duotoneHard = document.getElementById('duotoneHard');
+        let isOverlay = true;
+
+        toggleBtn.addEventListener('click', () => {
+            isOverlay = !isOverlay;
+            duotoneMain.style.display = isOverlay ? 'block' : 'none';
+            duotoneHard.style.display = isOverlay ? 'none' : 'block';
+            toggleBtn.textContent = isOverlay ? 'Hard Light' : 'Overlay';
+        });
+    </script>
+</body>
+</html>

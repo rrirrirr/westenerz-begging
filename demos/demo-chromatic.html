@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chromatic Aberration - Westenerz Mixtape</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-bg: #0a0a0f;
+            --color-accent: #ff006e;
+            --color-cyan: #00f5d4;
+            --color-yellow: #fee440;
+            --color-text: #f0f0f5;
+            --font-display: 'Syne', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            font-family: var(--font-mono);
+            color: var(--color-text);
+        }
+
+        /* Full screen video container */
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+        }
+
+        /* CHROMATIC ABERRATION EFFECT - RGB split */
+        .chromatic-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            /* Create RGB split using multiple box-shadows */
+            box-shadow: 
+                inset 30px 0 50px -20px rgba(255, 0, 0, 0.3),
+                inset -30px 0 50px -20px rgba(0, 255, 255, 0.3);
+        }
+
+        /* Layered RGB split effect */
+        .chromatic-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+
+        /* Red channel offset */
+        .chromatic-red {
+            background: rgba(255, 0, 78, 0.08);
+            transform: translateX(-3px);
+            mix-blend-mode: screen;
+        }
+
+        /* Blue channel offset */
+        .chromatic-blue {
+            background: rgba(0, 245, 212, 0.08);
+            transform: translateX(3px);
+            mix-blend-mode: screen;
+        }
+
+        /* Animated chromatic shift */
+        @keyframes chromatic-shift {
+            0%, 100% {
+                box-shadow: 
+                    inset 20px 0 40px -15px rgba(255, 0, 78, 0.25),
+                    inset -20px 0 40px -15px rgba(0, 245, 212, 0.25);
+            }
+            25% {
+                box-shadow: 
+                    inset 25px 0 50px -15px rgba(255, 0, 78, 0.35),
+                    inset -15px 0 30px -15px rgba(0, 245, 212, 0.2);
+            }
+            50% {
+                box-shadow: 
+                    inset 15px 0 30px -15px rgba(255, 0, 78, 0.2),
+                    inset -25px 0 50px -15px rgba(0, 245, 212, 0.35);
+            }
+            75% {
+                box-shadow: 
+                    inset 30px 0 45px -15px rgba(255, 0, 78, 0.3),
+                    inset -20px 0 35px -15px rgba(0, 245, 212, 0.25);
+            }
+        }
+
+        .chromatic-overlay.animated {
+            animation: chromatic-shift 3s ease-in-out infinite;
+        }
+
+        /* SVG Filter approach for more authentic chromatic aberration */
+        .chromatic-svg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 4;
+            pointer-events: none;
+            backdrop-filter: url('#chromatic-filter');
+            -webkit-backdrop-filter: url('#chromatic-filter');
+            display: none;
+        }
+
+        /* Gradient aberration - color fringing on edges */
+        .gradient-fringe {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            pointer-events: none;
+            background: 
+                linear-gradient(to right, 
+                    rgba(255, 0, 78, 0.1) 0%, 
+                    transparent 10%,
+                    transparent 90%,
+                    rgba(0, 245, 212, 0.1) 100%
+                );
+        }
+
+        /* Vignette to enhance the effect */
+        .chromatic-vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 6;
+            pointer-events: none;
+            background: radial-gradient(
+                ellipse at center,
+                transparent 0%,
+                transparent 50%,
+                rgba(10, 10, 15, 0.5) 100%
+            );
+        }
+
+        /* Grain overlay with color noise */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 7;
+            pointer-events: none;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            mix-blend-mode: overlay;
+        }
+
+        /* Demo label */
+        .demo-label {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 10;
+            background: rgba(10, 10, 15, 0.8);
+            border: 1px solid var(--color-accent);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .demo-label h1 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--color-text);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.25rem;
+            text-shadow: 
+                2px 0 var(--color-accent),
+                -2px 0 var(--color-cyan);
+        }
+
+        .demo-label p {
+            font-size: 0.75rem;
+            color: rgba(240, 240, 245, 0.7);
+            letter-spacing: 0.05em;
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(10, 10, 15, 0.9);
+            padding: 0.75rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 95vw;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 0.6rem 1.2rem;
+            color: rgba(240, 240, 245, 0.7);
+            text-decoration: none;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--color-text);
+        }
+
+        .nav-link.active {
+            background: var(--color-accent);
+            color: white;
+        }
+
+        /* Toggle button */
+        .toggle-btn {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 10;
+            background: rgba(10, 10, 15, 0.8);
+            border: 1px solid var(--color-cyan);
+            color: var(--color-cyan);
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .toggle-btn:hover {
+            background: var(--color-cyan);
+            color: var(--color-bg);
+        }
+
+        /* RGB indicators */
+        .rgb-indicator {
+            position: fixed;
+            bottom: 8rem;
+            right: 2rem;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+        }
+
+        .rgb-channel {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .rgb-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .rgb-dot.red { background: #ff004e; box-shadow: 0 0 10px #ff004e; }
+        .rgb-dot.green { background: #00ff88; box-shadow: 0 0 10px #00ff88; }
+        .rgb-dot.blue { background: #00f5d4; box-shadow: 0 0 10px #00f5d4; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .demo-label {
+                top: 1rem;
+                left: 1rem;
+                padding: 0.75rem 1rem;
+            }
+
+            .demo-label h1 {
+                font-size: 1.2rem;
+            }
+
+            .nav-container {
+                bottom: 1rem;
+                padding: 0.5rem;
+                gap: 0.25rem;
+            }
+
+            .nav-link {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.65rem;
+            }
+
+            .toggle-btn {
+                top: 1rem;
+                right: 1rem;
+                padding: 0.5rem 0.75rem;
+                font-size: 0.65rem;
+            }
+
+            .rgb-indicator {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hidden SVG filters for chromatic aberration -->
+    <svg style="display: none;">
+        <defs>
+            <filter id="chromatic-filter">
+                <!-- Red channel offset -->
+                <feColorMatrix type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="red"/>
+                <feOffset in="red" dx="-3" dy="0" result="red-shifted"/>
+                
+                <!-- Green channel (center) -->
+                <feColorMatrix type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="green"/>
+                
+                <!-- Blue channel offset -->
+                <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="blue"/>
+                <feOffset in="blue" dx="3" dy="0" result="blue-shifted"/>
+                
+                <!-- Blend all channels -->
+                <feBlend mode="screen" in="red-shifted" in2="green" result="rg"/>
+                <feBlend mode="screen" in="rg" in2="blue-shifted"/>
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Video Background -->
+    <div class="video-container">
+        <video autoplay muted loop playsinline>
+            <source src="../videos/hero-montage.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- Chromatic Overlay -->
+    <div class="chromatic-overlay" id="chromaticMain"></div>
+
+    <!-- RGB Layer Effects -->
+    <div class="chromatic-layer chromatic-red" id="redLayer"></div>
+    <div class="chromatic-layer chromatic-blue" id="blueLayer"></div>
+
+    <!-- SVG Filter Approach (hidden by default) -->
+    <div class="chromatic-svg" id="chromaticSvg"></div>
+
+    <!-- Gradient Fringe -->
+    <div class="gradient-fringe" id="gradientFringe"></div>
+
+    <!-- Vignette -->
+    <div class="chromatic-vignette"></div>
+
+    <!-- Grain Overlay -->
+    <div class="grain-overlay"></div>
+
+    <!-- Demo Label -->
+    <div class="demo-label">
+        <h1>Chromatic</h1>
+        <p>RGB split aberration gradient effect</p>
+    </div>
+
+    <!-- RGB Indicators -->
+    <div class="rgb-indicator">
+        <div class="rgb-channel">
+            <div class="rgb-dot red"></div>
+            <span style="color: #ff004e">RED -3px</span>
+        </div>
+        <div class="rgb-channel">
+            <div class="rgb-dot green"></div>
+            <span style="color: #00ff88">GREEN 0px</span>
+        </div>
+        <div class="rgb-channel">
+            <div class="rgb-dot blue"></div>
+            <span style="color: #00f5d4">BLUE +3px</span>
+        </div>
+    </div>
+
+    <!-- Toggle Button -->
+    <button class="toggle-btn" id="toggleAnim">Animate</button>
+
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <a href="demo-vignette.html" class="nav-link">Vignette</a>
+        <a href="demo-scanlines.html" class="nav-link">Scanlines</a>
+        <a href="demo-blur.html" class="nav-link">Blur</a>
+        <a href="demo-duotone.html" class="nav-link">Duotone</a>
+        <a href="demo-chromatic.html" class="nav-link active">Chromatic</a>
+        <a href="../index.html" class="nav-link">← Back</a>
+    </nav>
+
+    <script>
+        // Toggle animation
+        const toggleBtn = document.getElementById('toggleAnim');
+        const chromaticMain = document.getElementById('chromaticMain');
+        let isAnimated = false;
+
+        toggleBtn.addEventListener('click', () => {
+            isAnimated = !isAnimated;
+            chromaticMain.classList.toggle('animated', isAnimated);
+            toggleBtn.textContent = isAnimated ? 'Stop' : 'Animate';
+        });
+    </script>
+</body>
+</html>
