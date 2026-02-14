@@ -853,10 +853,24 @@ section h2 {
 
 /* Responsive */
 @media (max-width: 768px) {
+    /* Edge-to-edge on mobile */
+    .hero {
+        padding: 2rem 0;
+    }
+    
+    .container {
+        padding: 0 0 4rem 0;
+    }
+    
+    section {
+        padding: 2rem 1rem;
+    }
+    
     .product-showcase {
         grid-template-columns: 1fr;
         text-align: center;
         gap: 2rem;
+        padding: 2rem 1rem;
     }
     
     .vinyl {
@@ -867,6 +881,7 @@ section h2 {
     .sticker-bonus {
         grid-template-columns: 1fr;
         text-align: center;
+        margin: 0 1rem;
     }
     
     .sticker-container {
@@ -875,10 +890,24 @@ section h2 {
     
     .payment-options {
         grid-template-columns: 1fr;
+        padding: 0 1rem;
     }
     
     .info-grid {
         grid-template-columns: 1fr;
+        padding: 0 1rem;
+    }
+    
+    .crowdfunding {
+        margin: 0 1rem;
+    }
+    
+    .tracklist {
+        margin: 0 1rem;
+    }
+    
+    .shipping-info {
+        padding: 0 1rem;
     }
     
     .footer-content {
