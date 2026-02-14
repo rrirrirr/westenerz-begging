@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blur Fade - Westenerz Mixtape</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-bg: #0a0a0f;
+            --color-accent: #ff006e;
+            --color-cyan: #00f5d4;
+            --color-text: #f0f0f5;
+            --font-display: 'Syne', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background: var(--color-bg);
+            font-family: var(--font-mono);
+            color: var(--color-text);
+        }
+
+        /* BLUR FADE LAYERS - Background blurs and fades into sharp video center */
+        
+        /* Layer 1: Full screen blurred video (background) */
+        .blur-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            filter: blur(40px) brightness(0.4);
+            transform: scale(1.1);
+            opacity: 0.8;
+        }
+
+        .blur-background video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Layer 2: Gradient overlay to fade blur into solid background */
+        .blur-fade-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background: radial-gradient(
+                ellipse 80% 80% at center,
+                transparent 0%,
+                transparent 40%,
+                rgba(10, 10, 15, 0.6) 70%,
+                var(--color-bg) 100%
+            );
+            pointer-events: none;
+        }
+
+        /* Layer 3: Sharp video in center */
+        .sharp-center {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60vw;
+            height: 60vh;
+            z-index: 2;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 
+                0 20px 80px rgba(0, 0, 0, 0.8),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+
+        /* Soft edge mask for sharp video */
+        .sharp-center::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            pointer-events: none;
+            box-shadow: inset 0 0 60px rgba(10, 10, 15, 0.8);
+        }
+
+        .sharp-center video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Alternative: Larger video with softer transition */
+        .sharp-center.expanded {
+            width: 75vw;
+            height: 70vh;
+        }
+
+        .sharp-center.expanded::before {
+            box-shadow: inset 0 0 100px rgba(10, 10, 15, 0.9);
+        }
+
+        /* Glow ring around sharp video */
+        .glow-ring {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 62vw;
+            height: 62vh;
+            z-index: 1;
+            border-radius: 24px;
+            background: linear-gradient(135deg, rgba(255, 0, 110, 0.3), rgba(0, 245, 212, 0.2));
+            filter: blur(30px);
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .glow-ring.expanded {
+            width: 77vw;
+            height: 72vh;
+        }
+
+        /* Grain overlay */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 4;
+            pointer-events: none;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Scanlines overlay */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.03) 2px,
+                rgba(0, 0, 0, 0.03) 4px
+            );
+        }
+
+        /* Demo label */
+        .demo-label {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 10;
+            background: rgba(10, 10, 15, 0.85);
+            border: 1px solid var(--color-accent);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .demo-label h1 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.25rem;
+        }
+
+        .demo-label p {
+            font-size: 0.75rem;
+            color: rgba(240, 240, 245, 0.7);
+            letter-spacing: 0.05em;
+            max-width: 300px;
+            line-height: 1.4;
+        }
+
+        /* Size toggle */
+        .size-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 10;
+            background: rgba(10, 10, 15, 0.85);
+            border: 1px solid var(--color-cyan);
+            color: var(--color-cyan);
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .size-toggle:hover {
+            background: var(--color-cyan);
+            color: var(--color-bg);
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(10, 10, 15, 0.9);
+            padding: 0.75rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 95vw;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 0.6rem 1rem;
+            color: rgba(240, 240, 245, 0.7);
+            text-decoration: none;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--color-text);
+        }
+
+        .nav-link.active {
+            background: var(--color-accent);
+            color: white;
+        }
+
+        /* Decorative elements - tape window style */
+        .tape-window {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 58vw;
+            height: 58vh;
+            z-index: 2;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            pointer-events: none;
+        }
+
+        .tape-window.expanded {
+            width: 73vw;
+            height: 68vh;
+        }
+
+        /* Corner accents */
+        .corner-accent {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            z-index: 2;
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+        .corner-accent::before,
+        .corner-accent::after {
+            content: '';
+            position: absolute;
+            background: var(--color-cyan);
+        }
+
+        .corner-tl { top: 18%; left: 18%; }
+        .corner-tl::before { top: 0; left: 0; width: 100%; height: 1px; }
+        .corner-tl::after { top: 0; left: 0; width: 1px; height: 100%; }
+
+        .corner-tr { top: 18%; right: 18%; }
+        .corner-tr::before { top: 0; right: 0; width: 100%; height: 1px; }
+        .corner-tr::after { top: 0; right: 0; width: 1px; height: 100%; }
+
+        .corner-bl { bottom: 18%; left: 18%; }
+        .corner-bl::before { bottom: 0; left: 0; width: 100%; height: 1px; }
+        .corner-bl::after { bottom: 0; left: 0; width: 1px; height: 100%; }
+
+        .corner-br { bottom: 18%; right: 18%; }
+        .corner-br::before { bottom: 0; right: 0; width: 100%; height: 1px; }
+        .corner-br::after { bottom: 0; right: 0; width: 1px; height: 100%; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sharp-center {
+                width: 80vw;
+                height: 45vh;
+            }
+
+            .sharp-center.expanded {
+                width: 90vw;
+                height: 55vh;
+            }
+
+            .glow-ring {
+                width: 82vw;
+                height: 47vh;
+            }
+
+            .glow-ring.expanded {
+                width: 92vw;
+                height: 57vh;
+            }
+
+            .tape-window {
+                width: 78vw;
+                height: 43vh;
+            }
+
+            .tape-window.expanded {
+                width: 88vw;
+                height: 53vh;
+            }
+
+            .corner-accent {
+                width: 25px;
+                height: 25px;
+            }
+
+            .demo-label {
+                top: 1rem;
+                left: 1rem;
+                padding: 0.75rem 1rem;
+            }
+
+            .demo-label h1 {
+                font-size: 1.2rem;
+            }
+
+            .size-toggle {
+                top: 1rem;
+                right: 1rem;
+                padding: 0.5rem 0.75rem;
+                font-size: 0.65rem;
+            }
+
+            .nav-container {
+                bottom: 1rem;
+                padding: 0.5rem;
+                gap: 0.25rem;
+            }
+
+            .nav-link {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.65rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Blurred video background -->
+    <div class="blur-background">
+        <video autoplay muted loop playsinline>
+            <source src="../videos/hero-montage.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- Gradient fade overlay -->
+    <div class="blur-fade-overlay"></div>
+
+    <!-- Glow ring -->
+    <div class="glow-ring" id="glowRing"></div>
+
+    <!-- Sharp video center -->
+    <div class="sharp-center" id="sharpCenter">
+        <div class="video-container">
+            <video autoplay muted loop playsinline>
+                <source src="../videos/hero-montage.mp4" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
+    <!-- Tape window frame -->
+    <div class="tape-window" id="tapeWindow"></div>
+
+    <!-- Corner accents -->
+    <div class="corner-accent corner-tl"></div>
+    <div class="corner-accent corner-tr"></div>
+    <div class="corner-accent corner-bl"></div>
+    <div class="corner-accent corner-br"></div>
+
+    <!-- Grain Overlay -->
+    <div class="grain-overlay"></div>
+
+    <!-- Scanlines -->
+    <div class="scanlines"></div>
+
+    <!-- Demo Label -->
+    <div class="demo-label">
+        <h1>Blur Fade</h1>
+        <p>Background video blurs and fades into a sharp video center, creating depth and focus</p>
+    </div>
+
+    <!-- Size Toggle -->
+    <button class="size-toggle" id="sizeToggle">Expand</button>
+
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <a href="demo-feather.html" class="nav-link">Feather</a>
+        <a href="demo-gradient-mask.html" class="nav-link">Gradient</a>
+        <a href="demo-soft-vignette.html" class="nav-link">Vignette</a>
+        <a href="demo-blur-fade.html" class="nav-link active">Blur</a>
+        <a href="demo-vignette.html" class="nav-link">Classic</a>
+        <a href="demo-scanlines.html" class="nav-link">Scanlines</a>
+        <a href="demo-blur.html" class="nav-link">Motion</a>
+        <a href="demo-duotone.html" class="nav-link">Duotone</a>
+        <a href="demo-chromatic.html" class="nav-link">Chromatic</a>
+        <a href="../index.html" class="nav-link">← Back</a>
+    </nav>
+
+    <script>
+        const sharpCenter = document.getElementById('sharpCenter');
+        const glowRing = document.getElementById('glowRing');
+        const tapeWindow = document.getElementById('tapeWindow');
+        const sizeToggle = document.getElementById('sizeToggle');
+        let isExpanded = false;
+
+        sizeToggle.addEventListener('click', () => {
+            isExpanded = !isExpanded;
+            sharpCenter.classList.toggle('expanded', isExpanded);
+            glowRing.classList.toggle('expanded', isExpanded);
+            tapeWindow.classList.toggle('expanded', isExpanded);
+            sizeToggle.textContent = isExpanded ? 'Compact' : 'Expand';
+        });
+    </script>
+</body>
+</html>

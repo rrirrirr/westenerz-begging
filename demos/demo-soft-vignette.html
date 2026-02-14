@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soft Vignette - Westenerz Mixtape</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-bg: #0a0a0f;
+            --color-accent: #ff006e;
+            --color-cyan: #00f5d4;
+            --color-text: #f0f0f5;
+            --font-display: 'Syne', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background: 
+                radial-gradient(ellipse at 30% 20%, rgba(131, 56, 236, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(255, 0, 110, 0.08) 0%, transparent 50%),
+                var(--color-bg);
+            font-family: var(--font-mono);
+            color: var(--color-text);
+        }
+
+        /* SOFT VIGNETTE CONTAINER - Video in soft circular/oval with vignette fade */
+        .vignette-frame {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70vw;
+            height: 70vh;
+            z-index: 1;
+            /* Oval/circular clip with soft edge via mask */
+            -webkit-mask-image: radial-gradient(
+                ellipse 50% 50% at center,
+                black 0%,
+                black 70%,
+                transparent 100%
+            );
+            mask-image: radial-gradient(
+                ellipse 50% 50% at center,
+                black 0%,
+                black 70%,
+                transparent 100%
+            );
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 
+                0 0 100px rgba(255, 0, 110, 0.2),
+                0 0 200px rgba(131, 56, 236, 0.1),
+                inset 0 0 100px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Alternative shapes */
+        .vignette-frame.round-rect {
+            -webkit-mask-image: radial-gradient(
+                ellipse 45% 45% at center,
+                black 0%,
+                black 65%,
+                transparent 95%
+            );
+            mask-image: radial-gradient(
+                ellipse 45% 45% at center,
+                black 0%,
+                black 65%,
+                transparent 95%
+            );
+            border-radius: 40px;
+        }
+
+        .vignette-frame.wide {
+            width: 80vw;
+            height: 55vh;
+            -webkit-mask-image: radial-gradient(
+                ellipse 55% 45% at center,
+                black 0%,
+                black 60%,
+                transparent 100%
+            );
+            mask-image: radial-gradient(
+                ellipse 55% 45% at center,
+                black 0%,
+                black 60%,
+                transparent 100%
+            );
+            border-radius: 100px;
+        }
+
+        .video-container {
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Outer vignette shadow for depth */
+        .vignette-shadow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 72vw;
+            height: 72vh;
+            z-index: 0;
+            border-radius: 50%;
+            background: radial-gradient(
+                ellipse 50% 50% at center,
+                transparent 60%,
+                rgba(10, 10, 15, 0.8) 80%,
+                var(--color-bg) 100%
+            );
+            pointer-events: none;
+        }
+
+        .vignette-shadow.wide-shadow {
+            width: 82vw;
+            height: 57vh;
+            border-radius: 100px;
+        }
+
+        /* Animated ambient glow */
+        .ambient-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 75vw;
+            height: 75vh;
+            z-index: 0;
+            border-radius: 50%;
+            background: 
+                radial-gradient(ellipse at 40% 40%, rgba(255, 0, 110, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 60%, rgba(0, 245, 212, 0.1) 0%, transparent 50%);
+            filter: blur(60px);
+            animation: ambient-pulse 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes ambient-pulse {
+            0%, 100% { 
+                opacity: 0.6; 
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% { 
+                opacity: 1; 
+                transform: translate(-50%, -50%) scale(1.05);
+            }
+        }
+
+        /* Grain overlay */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Demo label */
+        .demo-label {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 10;
+            background: rgba(10, 10, 15, 0.85);
+            border: 1px solid var(--color-accent);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .demo-label h1 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.25rem;
+        }
+
+        .demo-label p {
+            font-size: 0.75rem;
+            color: rgba(240, 240, 245, 0.7);
+            letter-spacing: 0.05em;
+            max-width: 280px;
+            line-height: 1.4;
+        }
+
+        /* Shape selector */
+        .shape-selector {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .shape-btn {
+            background: rgba(10, 10, 15, 0.85);
+            border: 1px solid var(--color-cyan);
+            color: var(--color-cyan);
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .shape-btn:hover {
+            background: var(--color-cyan);
+            color: var(--color-bg);
+        }
+
+        .shape-btn.active {
+            background: var(--color-cyan);
+            color: var(--color-bg);
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(10, 10, 15, 0.9);
+            padding: 0.75rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 95vw;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 0.6rem 1rem;
+            color: rgba(240, 240, 245, 0.7);
+            text-decoration: none;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--color-text);
+        }
+
+        .nav-link.active {
+            background: var(--color-accent);
+            color: white;
+        }
+
+        /* Cassette frame decorations */
+        .cassette-frame {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 74vw;
+            height: 74vh;
+            z-index: 2;
+            border-radius: 50%;
+            pointer-events: none;
+            border: 1px solid rgba(255, 0, 110, 0.1);
+        }
+
+        .cassette-frame::before,
+        .cassette-frame::after {
+            content: '';
+            position: absolute;
+            border: 1px solid rgba(0, 245, 212, 0.08);
+            border-radius: 50%;
+        }
+
+        .cassette-frame::before {
+            top: 5%;
+            left: 5%;
+            right: 5%;
+            bottom: 5%;
+        }
+
+        .cassette-frame::after {
+            top: 10%;
+            left: 10%;
+            right: 10%;
+            bottom: 10%;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .vignette-frame {
+                width: 85vw;
+                height: 50vh;
+            }
+
+            .vignette-frame.wide {
+                width: 90vw;
+                height: 40vh;
+            }
+
+            .vignette-shadow {
+                width: 87vw;
+                height: 52vh;
+            }
+
+            .ambient-glow {
+                width: 90vw;
+                height: 55vh;
+            }
+
+            .cassette-frame {
+                width: 89vw;
+                height: 54vh;
+            }
+
+            .demo-label {
+                top: 1rem;
+                left: 1rem;
+                padding: 0.75rem 1rem;
+            }
+
+            .demo-label h1 {
+                font-size: 1.2rem;
+            }
+
+            .shape-selector {
+                top: 1rem;
+                right: 1rem;
+            }
+
+            .shape-btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.6rem;
+            }
+
+            .nav-container {
+                bottom: 1rem;
+                padding: 0.5rem;
+                gap: 0.25rem;
+            }
+
+            .nav-link {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.65rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Ambient glow behind video -->
+    <div class="ambient-glow"></div>
+
+    <!-- Vignette shadow for depth -->
+    <div class="vignette-shadow" id="vignetteShadow"></div>
+
+    <!-- Video in soft vignette frame -->
+    <div class="vignette-frame" id="vignetteFrame">
+        <div class="video-container">
+            <video autoplay muted loop playsinline>
+                <source src="../videos/hero-montage.mp4" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
+    <!-- Cassette frame decoration -->
+    <div class="cassette-frame" id="cassetteFrame"></div>
+
+    <!-- Grain Overlay -->
+    <div class="grain-overlay"></div>
+
+    <!-- Demo Label -->
+    <div class="demo-label">
+        <h1>Soft Vignette</h1>
+        <p>Video in soft circular/oval container with vignette fade to background</p>
+    </div>
+
+    <!-- Shape Selector -->
+    <div class="shape-selector">
+        <button class="shape-btn active" id="btnCircle">Circle</button>
+        <button class="shape-btn" id="btnRoundRect">Rounded</button>
+        <button class="shape-btn" id="btnWide">Cinematic</button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <a href="demo-feather.html" class="nav-link">Feather</a>
+        <a href="demo-gradient-mask.html" class="nav-link">Gradient</a>
+        <a href="demo-soft-vignette.html" class="nav-link active">Vignette</a>
+        <a href="demo-blur-fade.html" class="nav-link">Blur</a>
+        <a href="demo-vignette.html" class="nav-link">Classic</a>
+        <a href="demo-scanlines.html" class="nav-link">Scanlines</a>
+        <a href="demo-blur.html" class="nav-link">Motion</a>
+        <a href="demo-duotone.html" class="nav-link">Duotone</a>
+        <a href="demo-chromatic.html" class="nav-link">Chromatic</a>
+        <a href="../index.html" class="nav-link">← Back</a>
+    </nav>
+
+    <script>
+        const frame = document.getElementById('vignetteFrame');
+        const shadow = document.getElementById('vignetteShadow');
+        const cassette = document.getElementById('cassetteFrame');
+        const btnCircle = document.getElementById('btnCircle');
+        const btnRoundRect = document.getElementById('btnRoundRect');
+        const btnWide = document.getElementById('btnWide');
+
+        function clearActive() {
+            frame.classList.remove('round-rect', 'wide');
+            shadow.classList.remove('wide-shadow');
+            btnCircle.classList.remove('active');
+            btnRoundRect.classList.remove('active');
+            btnWide.classList.remove('active');
+        }
+
+        btnCircle.addEventListener('click', () => {
+            clearActive();
+            btnCircle.classList.add('active');
+        });
+
+        btnRoundRect.addEventListener('click', () => {
+            clearActive();
+            frame.classList.add('round-rect');
+            btnRoundRect.classList.add('active');
+        });
+
+        btnWide.addEventListener('click', () => {
+            clearActive();
+            frame.classList.add('wide');
+            shadow.classList.add('wide-shadow');
+            btnWide.classList.add('active');
+        });
+    </script>
+</body>
+</html>
