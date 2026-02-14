@@ -16,12 +16,12 @@
         .video-glow {
             position: fixed;
             top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90vw;
+            left: 0;
+            transform: translateY(-50%);
+            width: 100vw;
             height: 85vh;
             z-index: 0;
-            border-radius: 50px;
+            border-radius: 0;
             background: radial-gradient(
                 ellipse at center,
                 rgba(255, 0, 110, 0.12) 0%,
@@ -32,18 +32,17 @@
             pointer-events: none;
         }
 
-        /* Video container - normal rectangle */
+        /* Video container - full width edge to edge */
         .video-background {
             position: fixed;
             top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 85vw;
-            max-width: 1400px;
+            left: 0;
+            transform: translateY(-50%);
+            width: 100vw;
             height: 70vh;
             z-index: 1;
             overflow: hidden;
-            border-radius: 40px;
+            border-radius: 0;
         }
 
         /* Alternative radial feather mode */
@@ -69,39 +68,9 @@
             object-fit: cover;
         }
 
-        /* Corner accents - subtle decorative borders */
+        /* Corner accents - removed for edge-to-edge video */
         .corner {
-            position: fixed;
-            width: 80px;
-            height: 80px;
-            z-index: 2;
-            opacity: 0.25;
-            pointer-events: none;
-        }
-
-        .corner-tl { 
-            top: 8%; 
-            left: 5%; 
-            border-top: 2px solid #ff006e; 
-            border-left: 2px solid #ff006e; 
-        }
-        .corner-tr { 
-            top: 8%; 
-            right: 5%; 
-            border-top: 2px solid #ff006e; 
-            border-right: 2px solid #ff006e; 
-        }
-        .corner-bl { 
-            bottom: 8%; 
-            left: 5%; 
-            border-bottom: 2px solid #ff006e; 
-            border-left: 2px solid #ff006e; 
-        }
-        .corner-br { 
-            bottom: 8%; 
-            right: 5%; 
-            border-bottom: 2px solid #ff006e; 
-            border-right: 2px solid #ff006e; 
+            display: none;
         }
 
         /* Ensure content appears above video */
@@ -130,20 +99,19 @@
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .video-background {
-                width: 95vw;
+                width: 100vw;
                 height: 50vh;
-                border-radius: 24px;
+                border-radius: 0;
+                left: 0;
+                transform: translateY(-50%);
             }
             
             .video-glow {
-                width: 98vw;
+                width: 100vw;
                 height: 60vh;
                 filter: blur(30px);
-            }
-            
-            .corner {
-                width: 50px;
-                height: 50px;
+                left: 0;
+                transform: translateY(-50%);
             }
 
             .section-transition {
@@ -153,14 +121,11 @@
 
         @media (max-width: 480px) {
             .video-background {
+                width: 100vw;
                 height: 40vh;
-                border-radius: 20px;
-            }
-            
-            .corner {
-                width: 35px;
-                height: 35px;
-                opacity: 0.2;
+                border-radius: 0;
+                left: 0;
+                transform: translateY(-50%);
             }
         }
     </style>
