@@ -32,7 +32,7 @@
             pointer-events: none;
         }
 
-        /* Feathered video container - video fades to transparent at edges */
+        /* Video container - normal rectangle */
         .video-background {
             position: fixed;
             top: 50%;
@@ -43,31 +43,6 @@
             height: 70vh;
             z-index: 1;
             overflow: hidden;
-            /* Linear feather mask - fades edges to transparent */
-            -webkit-mask-image: 
-                linear-gradient(to right, 
-                    transparent 0%, 
-                    black 10%, 
-                    black 90%, 
-                    transparent 100%),
-                linear-gradient(to bottom, 
-                    transparent 0%, 
-                    black 10%, 
-                    black 90%, 
-                    transparent 100%);
-            mask-image: 
-                linear-gradient(to right, 
-                    transparent 0%, 
-                    black 10%, 
-                    black 90%, 
-                    transparent 100%),
-                linear-gradient(to bottom, 
-                    transparent 0%, 
-                    black 10%, 
-                    black 90%, 
-                    transparent 100%);
-            -webkit-mask-composite: source-in;
-            mask-composite: intersect;
             border-radius: 40px;
         }
 
@@ -137,38 +112,27 @@
             z-index: 10;
         }
 
-        /* Responsive adjustments for feather effect */
+        /* Gradient transition between header and main */
+        .section-transition {
+            height: 120px;
+            background: linear-gradient(
+                to bottom,
+                rgba(10, 10, 15, 1) 0%,
+                rgba(10, 10, 15, 0.95) 30%,
+                rgba(10, 10, 15, 0.8) 60%,
+                transparent 100%
+            );
+            position: relative;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        /* Responsive adjustments */
         @media (max-width: 768px) {
             .video-background {
                 width: 95vw;
                 height: 50vh;
                 border-radius: 24px;
-                -webkit-mask-image: 
-                    linear-gradient(to right, 
-                        transparent 0%, 
-                        black 5%, 
-                        black 95%, 
-                        transparent 100%),
-                    linear-gradient(to bottom, 
-                        transparent 0%, 
-                        black 5%, 
-                        black 95%, 
-                        transparent 100%);
-                mask-image: 
-                    linear-gradient(to right, 
-                        transparent 0%, 
-                        black 5%, 
-                        black 95%, 
-                        transparent 100%),
-                    linear-gradient(to bottom, 
-                        transparent 0%, 
-                        black 5%, 
-                        black 95%, 
-                        transparent 100%);
-            }
-            
-            .video-background.radial-feather {
-                border-radius: 40px;
             }
             
             .video-glow {
@@ -180,6 +144,10 @@
             .corner {
                 width: 50px;
                 height: 50px;
+            }
+
+            .section-transition {
+                height: 80px;
             }
         }
 
@@ -224,6 +192,9 @@
         <p class="subtitle">MIXTAPE VOL. 1</p>
         <div class="cassette-icon">📼</div>
     </header>
+
+    <!-- Gradient transition between header and main -->
+    <div class="section-transition"></div>
 
     <main class="container">
         <section class="product-showcase">
