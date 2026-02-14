@@ -34,6 +34,54 @@ body {
     min-height: 100vh;
 }
 
+/* Background Video */
+.video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    overflow: hidden;
+}
+
+.video-background video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+}
+
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        rgba(10, 10, 15, 0.7) 0%,
+        rgba(10, 10, 15, 0.5) 50%,
+        rgba(10, 10, 15, 0.8) 100%
+    );
+}
+
+/* Mobile: hide video, show poster as background */
+@media (max-width: 768px) {
+    .video-background video {
+        display: none;
+    }
+    
+    .video-background {
+        background: url('images/video-poster.jpg') center center / cover no-repeat;
+    }
+}
+
 /* Noise overlay */
 .noise-overlay {
     position: fixed;
